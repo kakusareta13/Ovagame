@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>💥 Краш-игра | Букмекерская игра</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="crash-style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Левая колонка - краш-игра -->
+        <div class="game-column">
+            <!-- Шапка -->
+            <div class="header">
+                <div class="balance-section">
+                    <div class="balance-label">💰 БАЛАНС</div>
+                    <div class="balance-amount" id="balance">1000</div>
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="winRate">0%</div>
+                        <div class="stat-label">ПОБЕД</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="totalBets">0</div>
+                        <div class="stat-label">СТАВОК</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="profit">0</div>
+                        <div class="stat-label">ПРОФИТ</div>
+                    </div>
+                </div>
+                <div class="control-buttons">
+                    <button class="btn-control" onclick="switchToNumberGame()">🎲 УГАДАЙ ЦИФРУ</button>
+                    <button class="btn-control" onclick="resetGame()">🔄 СБРОС</button>
+                </div>
+            </div>
+
+            <!-- Краш-игра -->
+            <div class="crash-game-area">
+                <div class="crash-header">
+                    <div class="crash-title">💥 CRASH GAME</div>
+                    <div class="crash-multiplier" id="currentMultiplier">1.00x</div>
+                </div>
+                
+                <!-- График краша -->
+                <div class="crash-chart-container">
+                    <canvas id="crashChart" class="crash-chart"></canvas>
+                    <div class="crash-line" id="crashLine"></div>
+                </div>
+                
+                <!-- Информация о раунде -->
+                <div class="crash-info">
+                    <div class="info-item">
+                        <span class="info-label">СТАТУС:</span>
+                        <span class="info-value" id="gameStatus">Ожидание ставки</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">ПОСЛЕДНИЙ КРАШ:</span>
+                        <span class="info-value" id="lastCrash">-</span>
+                    </div>
+                </div>
+                
+                <!-- Панель ставки -->
+                <div class="crash-bet-panel">
+                    <div class="bet-input-wrapper">
+                        <span class="bet-input-label">СТАВКА $</span>
+                        <input type="number" id="betAmount" class="bet-input" value="10" min="1" step="5">
+                    </div>
+                    
+                    <div class="auto-cashout-wrapper">
+                        <span class="auto-label">🤖 АВТОВЫВОД</span>
+                        <input type="number" id="autoCashout" class="auto-input" placeholder="x1.00" step="0.1" min="1.01">
+                        <button class="set-auto-btn" onclick="setAutoCashout()">УСТАНОВИТЬ</button>
+                    </div>
+                    
+                    <div class="action-buttons">
+                        <button class="place-bet-btn" id="placeBetBtn" onclick="placeCrashBet()">🎲 СДЕЛАТЬ СТАВКУ</button>
+                        <button class="cashout-btn" id="cashoutBtn" onclick="cashout()" disabled>💰 ЗАБРАТЬ</button>
+                    </div>
+                </div>
+                
+                <!-- История крашей -->
+                <div class="crash-history-section">
+                    <div class="history-header">
+                        <div class="history-title">📊 ИСТОРИЯ КРАШЕЙ</div>
+                        <button class="clear-history-btn" onclick="clearCrashHistory()">ОЧИСТИТЬ</button>
+                    </div>
+                    <div class="crash-history-list" id="crashHistoryList">
+                        <div style="color: #666; text-align: center; width: 100%;">Нет истории</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- График баланса -->
+            <div class="chart-section">
+                <div class="chart-header">
+                    <div class="chart-title">📈 ДИНАМИКА БАЛАНСА (последние 20 ставок)</div>
+                </div>
+                <canvas id="balanceChart" class="balance-chart"></canvas>
+            </div>
+        </div>
+
+        <!-- Правая колонка - таблица лидеров -->
+        <div class="leaderboard-column">
+            <div class="leaderboard-container">
+                <div class="leaderboard-header">
+                    <div class="leaderboard-title">🏆 ТАБЛИЦА ЛИДЕРОВ</div>
+                    <div class="leaderboard-subtitle">Лучшие результаты</div>
+                </div>
+                <div class="leaderboard-stats">
+                    <div class="leaderboard-card">
+                        <div class="leaderboard-icon">💰</div>
+                        <div class="leaderboard-info">
+                            <div class="leaderboard-label">МАКС. ВЫИГРЫШ</div>
+                            <div class="leaderboard-value" id="leaderboardMaxWin">0</div>
+                        </div>
+                    </div>
+                    <div class="leaderboard-card">
+                        <div class="leaderboard-icon">📊</div>
+                        <div class="leaderboard-info">
+                            <div class="leaderboard-label">ОБЩИЙ ПРОФИТ</div>
+                            <div class="leaderboard-value" id="leaderboardProfit">0</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="leaderboard-divider"></div>
+                <div class="leaderboard-list">
+                    <div class="leaderboard-list-item">
+                        <span class="list-rank">🎯</span>
+                        <span class="list-label">ЛУЧШИЙ МНОЖИТЕЛЬ:</span>
+                        <span class="list-value" id="bestMultiplier">0x</span>
+                    </div>
+                    <div class="leaderboard-list-item">
+                        <span class="list-rank">⚡</span>
+                        <span class="list-label">ЛУЧШАЯ СЕРИЯ:</span>
+                        <span class="list-value" id="bestStreak">0</span>
+                    </div>
+                    <div class="leaderboard-list-item">
+                        <span class="list-rank">💥</span>
+                        <span class="list-label">СРЕДНИЙ КРАШ:</span>
+                        <span class="list-value" id="avgCrash">0x</span>
+                    </div>
+                </div>
+                <div class="leaderboard-note">
+                    <small>✨ Ваши личные рекорды сохраняются</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="common.js"></script>
+    <script src="crash-script.js"></script>
+</body>
+</html>

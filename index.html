@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>🎰 Букмекерская игра - Угадай цифру</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Левая колонка - основная игра -->
+        <div class="game-column">
+            <!-- Шапка -->
+            <div class="header">
+                <div class="balance-section">
+                    <div class="balance-label">💰 БАЛАНС</div>
+                    <div class="balance-amount" id="balance">1000</div>
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="winRate">0%</div>
+                        <div class="stat-label">ПОБЕД</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="totalBets">0</div>
+                        <div class="stat-label">СТАВОК</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="profit">0</div>
+                        <div class="stat-label">ПРОФИТ</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="bestWin">0</div>
+                        <div class="stat-label">МАКС. ВЫИГРЫШ</div>
+                    </div>
+                </div>
+                <div class="control-buttons">
+                    <button class="btn-control" onclick="switchToCrashGame()">💥 КРАШ-РЕЖИМ</button>
+                    <button class="btn-control" onclick="resetGame()">🔄 СБРОС</button>
+                </div>
+            </div>
+
+            <!-- Игровая зона -->
+            <div class="game-area">
+                <div class="roulette-wheel">
+                    <div class="current-number" id="currentNumber">?</div>
+                </div>
+
+                <div class="numbers-container">
+                    <div class="numbers-grid" id="numbersGrid"></div>
+                </div>
+
+                <div class="bet-panel">
+                    <div class="bet-input-wrapper">
+                        <span class="bet-input-label">СТАВКА $</span>
+                        <input type="number" id="betAmount" class="bet-input" value="10" min="1" step="5">
+                    </div>
+                    <button class="place-bet-btn" id="placeBetBtn" onclick="placeBet()">🎲 СДЕЛАТЬ СТАВКУ</button>
+                </div>
+            </div>
+
+            <!-- История ставок -->
+            <div class="history-section">
+                <div class="history-header">
+                    <div class="history-title">📜 ИСТОРИЯ СТАВОК (последние 10)</div>
+                    <button class="clear-history-btn" onclick="clearHistory()">ОЧИСТИТЬ</button>
+                </div>
+                <div class="history-list" id="historyList">
+                    <div style="color: #666; text-align: center; width: 100%;">Нет ставок. Сделайте первую ставку!</div>
+                </div>
+            </div>
+
+            <!-- График баланса -->
+            <div class="chart-section">
+                <div class="chart-header">
+                    <div class="chart-title">📈 ДИНАМИКА БАЛАНСА (последние 20 ставок)</div>
+                </div>
+                <canvas id="balanceChart" class="balance-chart"></canvas>
+            </div>
+        </div>
+
+        <!-- Правая колонка - таблица лидеров -->
+        <div class="leaderboard-column">
+            <div class="leaderboard-container">
+                <div class="leaderboard-header">
+                    <div class="leaderboard-title">🏆 ТАБЛИЦА ЛИДЕРОВ</div>
+                    <div class="leaderboard-subtitle">Лучшие результаты</div>
+                </div>
+                <div class="leaderboard-stats">
+                    <div class="leaderboard-card">
+                        <div class="leaderboard-icon">💰</div>
+                        <div class="leaderboard-info">
+                            <div class="leaderboard-label">МАКСИМАЛЬНЫЙ ВЫИГРЫШ</div>
+                            <div class="leaderboard-value" id="leaderboardMaxWin">0</div>
+                        </div>
+                    </div>
+                    <div class="leaderboard-card">
+                        <div class="leaderboard-icon">📊</div>
+                        <div class="leaderboard-info">
+                            <div class="leaderboard-label">ОБЩИЙ ПРОФИТ</div>
+                            <div class="leaderboard-value" id="leaderboardProfit">0</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="leaderboard-divider"></div>
+                <div class="leaderboard-list">
+                    <div class="leaderboard-list-item">
+                        <span class="list-rank">🏆</span>
+                        <span class="list-label">Рекордная ставка:</span>
+                        <span class="list-value" id="recordBet">0</span>
+                    </div>
+                    <div class="leaderboard-list-item">
+                        <span class="list-rank">🎯</span>
+                        <span class="list-label">Самая частая цифра:</span>
+                        <span class="list-value" id="mostCommonNumber">-</span>
+                    </div>
+                    <div class="leaderboard-list-item">
+                        <span class="list-rank">⚡</span>
+                        <span class="list-label">Лучшая серия побед:</span>
+                        <span class="list-value" id="bestStreak">0</span>
+                    </div>
+                </div>
+                <div class="leaderboard-note">
+                    <small>✨ Ваши личные рекорды сохраняются в браузере</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="script.js"></script>
+    <script>
+        // Функция переключения на краш-режим
+        function switchToCrashGame() {
+            window.location.href = 'crash.html';
+        }
+    </script>
+</body>
+</html>
