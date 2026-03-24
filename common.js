@@ -55,13 +55,38 @@ function updateGlobalBalance(change, isWin, winAmount, betAmount, result, select
     if (isWin) {
         globalWins++;
         if (winAmount > globalBestWin) globalBestWin = winAmount;
+        
+        // Обновляем лучшую серию
+        if (typeof window !== 'undefined' && window.currentStreak !== undefined) {
+            window.currentStreak = (window.currentStreak || 0) + 1;
+            if (window.currentStreak > globalBestStreak) {
+                globalBestStreak = window.currentStreak;
+            }
+        }
+    } else {
+        // Сбрасываем серию при проигрыше
+        if (typeof window !== 'undefined') {
+            window.currentStreak = 0;
+        }
     }
     
     globalTotalBets++;
     
+    // Определяем тип игры (автоматически из URL)
+    let gameType = 'unknown';
+    if (window.location.pathname.includes('index') || window.location.pathname === '/' || window.location.pathname === '') {
+        gameType = 'number';
+    } else if (window.location.pathname.includes('keno')) {
+        gameType = 'keno';
+    } else if (window.location.pathname.includes('penalty')) {
+        gameType = 'penalty';
+    } else if (window.location.pathname.includes('crash')) {
+        gameType = 'crash';
+    }
+    
     // Добавляем в историю
     globalHistory.unshift({
-        game: 'crash', // или 'number' для основной игры
+        game: gameType,
         result: result,
         bet: betAmount,
         win: isWin,
@@ -88,6 +113,12 @@ function resetGlobalData() {
     globalBestStreak = 0;
     globalHistory = [];
     globalBalanceHistory = [1000];
+    
+    // Сбрасываем текущую серию если есть
+    if (typeof window !== 'undefined') {
+        window.currentStreak = 0;
+    }
+    
     saveGlobalData();
 }
 
@@ -121,8 +152,11 @@ window.GameData = {
     updateBalance: updateGlobalBalance,
     reset: resetGlobalData,
     getBalance: getBalance,
-    getHistory: () => globalBalanceHistory,
+    getHistory: getBalanceHistory,
     getStats: getStats,
     balance: () => globalBalance,
     setBalance: (newBalance) => { globalBalance = newBalance; saveGlobalData(); }
 };
+
+// Автоматическая загрузка данных при старте
+loadGlobalData();
