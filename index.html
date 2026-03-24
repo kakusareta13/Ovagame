@@ -39,7 +39,7 @@
                     </div>
                 </div>
                 <div class="control-buttons">
-                    <button class="btn-control" onclick="switchToCrashGame()">💥 КРАШ-РЕЖИМ</button>
+                    <button class="btn-control" onclick="switchToKenoGame()">🎰 КЕНО</button>
                     <button class="btn-control" onclick="resetGame()">🔄 СБРОС</button>
                 </div>
             </div>
@@ -57,7 +57,7 @@
                 <div class="bet-panel">
                     <div class="bet-input-wrapper">
                         <span class="bet-input-label">СТАВКА $</span>
-                        <input type="number" id="betAmount" class="bet-input" value="10" min="1" step="5">
+                        <input type="number" id="betAmount" class="bet-input" value="10" min="1" step="5" inputmode="numeric" pattern="[0-9]*">
                     </div>
                     <button class="place-bet-btn" id="placeBetBtn" onclick="placeBet()">🎲 СДЕЛАТЬ СТАВКУ</button>
                 </div>
@@ -135,9 +135,9 @@
 
     <script src="script.js"></script>
     <script>
-        // Функция переключения на краш-режим
-        function switchToCrashGame() {
-            window.location.href = 'crash.html';
+        // Функция переключения на кено
+        function switchToKenoGame() {
+            window.location.href = 'keno.html';
         }
     </script>
 </body>
