@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>💥 Краш-игра | Букмекерская игра</title>
+    <title>🎰 Кено | Букмекерская игра</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="crash-style.css">
+    <link rel="stylesheet" href="keno-style.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
 <body>
     <div class="app-container">
-        <!-- Левая колонка - краш-игра -->
+        <!-- Левая колонка - кено -->
         <div class="game-column">
             <!-- Шапка -->
             <div class="header">
@@ -33,62 +33,67 @@
                     </div>
                 </div>
                 <div class="control-buttons">
-                    <button class="btn-control" onclick="switchToNumberGame()">🎲 УГАДАЙ ЦИФРУ</button>
-                    <button class="btn-control" onclick="resetGame()">🔄 СБРОС</button>
-                </div>
+    <button class="btn-control" onclick="switchToNumberGame()">🎲 УГАДАЙ ЦИФРУ</button>
+    <button class="btn-control" onclick="resetGame()">🔄 СБРОС</button>
+</div>
             </div>
 
-            <!-- Краш-игра -->
-            <div class="crash-game-area">
-                <div class="crash-header">
-                    <div class="crash-title">💥 CRASH GAME</div>
-                    <div class="crash-multiplier" id="currentMultiplier">1.00x</div>
+            <!-- Кено игра -->
+            <div class="keno-game-area">
+                <div class="keno-header">
+                    <div class="keno-title">🎰 КЕНО</div>
+                    <div class="keno-subtitle">Выбери номера (1-10)</div>
                 </div>
-                
-                <!-- График краша -->
-                <div class="crash-chart-container">
-                    <canvas id="crashChart" class="crash-chart"></canvas>
-                    <div class="crash-line" id="crashLine"></div>
-                </div>
-                
-                <!-- Информация о раунде -->
-                <div class="crash-info">
-                    <div class="info-item">
-                        <span class="info-label">СТАТУС:</span>
-                        <span class="info-value" id="gameStatus">Ожидание ставки</span>
+
+                <!-- Информация о выбранных номерах -->
+                <div class="selection-info">
+                    <div class="info-box">
+                        <span class="info-label">ВЫБРАНО НОМЕРОВ:</span>
+                        <span class="info-value" id="selectedCount">0</span>
                     </div>
-                    <div class="info-item">
-                        <span class="info-label">ПОСЛЕДНИЙ КРАШ:</span>
-                        <span class="info-value" id="lastCrash">-</span>
+                    <div class="info-box">
+                        <span class="info-label">МАКС. ВЫИГРЫШ:</span>
+                        <span class="info-value" id="maxWinInfo">0x</span>
+                    </div>
+                    <button class="clear-selection-btn" onclick="clearSelection()">ОЧИСТИТЬ ВСЕ</button>
+                </div>
+
+                <!-- Сетка номеров 1-80 -->
+                <div class="numbers-grid-keno" id="numbersGridKeno">
+                    <!-- Номера будут сгенерированы через JS -->
+                </div>
+
+                <!-- Выпавшие номера -->
+                <div class="drawn-numbers-section">
+                    <div class="section-title">🎲 ВЫПАВШИЕ НОМЕРА (20)</div>
+                    <div class="drawn-numbers-list" id="drawnNumbersList">
+                        <div style="color: #666; text-align: center;">Нажмите "РАЗЫГРАТЬ"</div>
                     </div>
                 </div>
-                
+
+                <!-- Совпадения -->
+                <div class="matches-section">
+                    <div class="section-title">✨ СОВПАДЕНИЯ</div>
+                    <div class="matches-count" id="matchesCount">0</div>
+                    <div class="matches-list" id="matchesList"></div>
+                </div>
+
                 <!-- Панель ставки -->
-                <div class="crash-bet-panel">
+                <div class="bet-panel-keno">
                     <div class="bet-input-wrapper">
                         <span class="bet-input-label">СТАВКА $</span>
-                        <input type="number" id="betAmount" class="bet-input" value="10" min="1" step="5">
+                        <input type="number" id="betAmount" class="bet-input" value="10" min="1" step="5" inputmode="numeric" pattern="[0-9]*">
                     </div>
-                    
-                    <div class="auto-cashout-wrapper">
-                        <span class="auto-label">🤖 АВТОВЫВОД</span>
-                        <input type="number" id="autoCashout" class="auto-input" placeholder="x1.00" step="0.1" min="1.01">
-                        <button class="set-auto-btn" onclick="setAutoCashout()">УСТАНОВИТЬ</button>
-                    </div>
-                    
-                    <div class="action-buttons">
-                        <button class="place-bet-btn" id="placeBetBtn" onclick="placeCrashBet()">🎲 СДЕЛАТЬ СТАВКУ</button>
-                        <button class="cashout-btn" id="cashoutBtn" onclick="cashout()" disabled>💰 ЗАБРАТЬ</button>
-                    </div>
+                    <button class="draw-btn" id="drawBtn" onclick="drawNumbers()" disabled>🎲 РАЗЫГРАТЬ</button>
                 </div>
-                
-                <!-- История крашей -->
-                <div class="crash-history-section">
+
+                <!-- История игр -->
+                <div class="keno-history-section">
                     <div class="history-header">
-                        <div class="history-title">📊 ИСТОРИЯ КРАШЕЙ</div>
-                        <button class="clear-history-btn" onclick="clearCrashHistory()">ОЧИСТИТЬ</button>
+                        <div class="history-title">📊 ИСТОРИЯ ИГР</div>
+                        <button class="clear-history-btn" onclick="clearKenoHistory()">ОЧИСТИТЬ</button>
                     </div>
-                    <div class="crash-history-list" id="crashHistoryList">
+                    <div class="keno-history-list" id="kenoHistoryList">
                         <div style="color: #666; text-align: center; width: 100%;">Нет истории</div>
                     </div>
                 </div>
@@ -130,18 +135,18 @@
                 <div class="leaderboard-list">
                     <div class="leaderboard-list-item">
                         <span class="list-rank">🎯</span>
-                        <span class="list-label">ЛУЧШИЙ МНОЖИТЕЛЬ:</span>
-                        <span class="list-value" id="bestMultiplier">0x</span>
+                        <span class="list-label">ЛУЧШЕЕ СОВПАДЕНИЕ:</span>
+                        <span class="list-value" id="bestMatch">0</span>
                     </div>
                     <div class="leaderboard-list-item">
-                        <span class="list-rank">⚡</span>
-                        <span class="list-label">ЛУЧШАЯ СЕРИЯ:</span>
-                        <span class="list-value" id="bestStreak">0</span>
+                        <span class="list-rank">⭐</span>
+                        <span class="list-label">ЛЮБИМЫЙ НОМЕР:</span>
+                        <span class="list-value" id="favoriteNumber">—</span>
                     </div>
                     <div class="leaderboard-list-item">
-                        <span class="list-rank">💥</span>
-                        <span class="list-label">СРЕДНИЙ КРАШ:</span>
-                        <span class="list-value" id="avgCrash">0x</span>
+                        <span class="list-rank">🎲</span>
+                        <span class="list-label">ИГР СЫГРАНО:</span>
+                        <span class="list-value" id="gamesPlayed">0</span>
                     </div>
                 </div>
                 <div class="leaderboard-note">
@@ -154,6 +159,6 @@
     <div class="toast-container" id="toastContainer"></div>
 
     <script src="common.js"></script>
-    <script src="crash-script.js"></script>
+    <script src="keno-script.js"></script>
 </body>
 </html>
