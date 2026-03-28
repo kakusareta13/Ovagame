@@ -130,9 +130,34 @@ function calculateWin(matches) {
     const count = selectedNumbers.length;
     const matchCount = matches.length;
     
+    // Если нет совпадений - проигрыш
+    if (matchCount === 0) return 0;
+    
+    // Если выбрано 1 число - только при 1 совпадении выигрыш x3
+    if (count === 1 && matchCount === 1) return 3;
+    
+    // Проверяем стандартную таблицу выплат
     if (payoutTable[count] && payoutTable[count][matchCount]) {
         return payoutTable[count][matchCount];
     }
+    
+    // Если нет в стандартной таблице, даем минимальный выигрыш
+    // Чем больше совпадений, тем выше коэффициент
+    if (matchCount >= 1) {
+        // Минимальный выигрыш x1 (возврат ставки)
+        let multiplier = 1;
+        
+        // Увеличиваем коэффициент в зависимости от количества совпадений
+        if (matchCount >= 5) multiplier = 2;
+        if (matchCount >= 6) multiplier = 3;
+        if (matchCount >= 7) multiplier = 5;
+        if (matchCount >= 8) multiplier = 10;
+        if (matchCount >= 9) multiplier = 20;
+        if (matchCount >= 10) multiplier = 50;
+        
+        return multiplier;
+    }
+    
     return 0;
 }
 
